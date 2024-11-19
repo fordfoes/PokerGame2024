@@ -1,9 +1,12 @@
 package org.example; // Указываем пакет
 // Указываем импорты
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;// Указываем импорты// Указываем импорты
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GoodDealer implements Dealer { // Создаем класс хороший дилер который реализует интерфейс Dealer
     // Определяем поля класса
@@ -39,8 +42,8 @@ public class GoodDealer implements Dealer { // Создаем класс хор�
     // Переопределяем метод интерфейса раздача карт игрокам
     @Override
     public Board dealCardsToPlayers() {
-        String playerOne = dealCard() + "," + dealCard(); // Раздаем две карты первому игроку
-        String playerTwo = dealCard() + "," + dealCard(); // Раздаем две карты второму игроку
+        String playerOne = dealCard() + dealCard(); // Раздаем две карты первому игроку
+        String playerTwo = dealCard() + dealCard(); // Раздаем две карты второму игроку
 
         // Убедимся что карты уникальны
         if (playerOne.equals(playerTwo)) {
@@ -52,7 +55,7 @@ public class GoodDealer implements Dealer { // Создаем класс хор�
 
     @Override // Переопределяем метод интерфейса раздача 3 карт общих для игроков
     public Board dealFlop(Board board) {
-        String flop = dealCard() + "," + dealCard() + "," + dealCard(); // Раздача 3 карт
+        String flop = dealCard() + dealCard() + dealCard(); // Раздача 3 карт
         return new Board(board.getPlayerOne(), board.getPlayerTwo(), flop, null, null); // Возвращаем на игровую доску уже розданные карты игрока и флоп
     }
 
@@ -72,35 +75,59 @@ public class GoodDealer implements Dealer { // Создаем класс хор�
     public PokerResult decideWinner(Board board) throws InvalidPokerBoardException { // Определяем победителя
         validateBoard(board);// Проверка что на игровом столе все в порядке
 
-        // Создаем список карт для первого игрока, разделяя их по запятой
         List<String> playerOneCards = new ArrayList<>();
-        Collections.addAll(playerOneCards, board.getPlayerOne().split(","));
+
+        // Регулярное выражение для поиска групп по 2 или 3 символа, заканчивающихся на C, D, H или S
+        Pattern pattern = Pattern.compile("\\d{1,2}[CDHS]|[A-Z][CDHS]");
+        Matcher matcher = pattern.matcher(board.getPlayerOne());
+
+        while (matcher.find()) {
+            playerOneCards.add(matcher.group());
+        }
 
         // Создаем список карт для второго игрока, разделяя их по запятой
         List<String> playerTwoCards = new ArrayList<>();
-        Collections.addAll(playerTwoCards, board.getPlayerTwo().split(","));
+
+        matcher = pattern.matcher(board.getPlayerTwo());
+
+        while (matcher.find()) {
+            playerTwoCards.add(matcher.group());
+        }
 
         // Создаем список общих карт
         List<String> communityCards = new ArrayList<>();
 
         // Добавляем флоп (первые три общие карты), если он не равен null
         if (board.getFlop() != null) {
-            Collections.addAll(communityCards, board.getFlop().split(","));
+            matcher = pattern.matcher(board.getFlop());
+
+            while (matcher.find()) {
+                communityCards.add(matcher.group());
+            }
         }
 
         // Добавляем терн (четвертая общая карта), если он не равен null
         if (board.getTurn() != null) {
-            communityCards.add(board.getTurn());
+            matcher = pattern.matcher(board.getTurn());
+
+            while (matcher.find()) {
+                communityCards.add(matcher.group());
+            }
         }
 
         // Добавляем ривер (пятая общая карта), если он не равен null
         if (board.getRiver() != null) {
-            communityCards.add(board.getRiver());
+            matcher = pattern.matcher(board.getRiver());
+
+            while (matcher.find()) {
+                communityCards.add(matcher.group());
+            }
         }
 
         // Создаем руки игроков, используя их карты и общие карты
         Hand playerOneHand = new Hand(playerOneCards, communityCards);
         Hand playerTwoHand = new Hand(playerTwoCards, communityCards);
+
 
         // Сравниваем руки игроков
         int comparisonResult = playerOneHand.comparison(playerTwoHand);
@@ -117,25 +144,48 @@ public class GoodDealer implements Dealer { // Создаем класс хор�
 
     private void validateBoard(Board board) {
         HashSet<String> allCards = new HashSet<>(); // Создаем HashSet для хранения уникальных карт
-        // Разделяем карты игрока 1
-        Collections.addAll(allCards, board.getPlayerOne().split(","));
 
-        // Разделяем карты игрока 2
-        Collections.addAll(allCards, board.getPlayerTwo().split(","));
+        // Регулярное выражение для поиска групп по 2 или 3 символа, заканчивающихся на C, D, H или S
+        Pattern pattern = Pattern.compile("\\d{1,2}[CDHS]|[A-Z][CDHS]");
+        Matcher matcher = pattern.matcher(board.getPlayerOne());
 
-        // Разделяем карты флопа, если они есть
+        while (matcher.find()) {
+            allCards.add(matcher.group());
+        }
+
+
+        matcher = pattern.matcher(board.getPlayerTwo());
+
+        while (matcher.find()) {
+            allCards.add(matcher.group());
+        }
+
+
+        // Добавляем флоп (первые три общие карты), если он не равен null
         if (board.getFlop() != null) {
-            Collections.addAll(allCards, board.getFlop().split(","));
+            matcher = pattern.matcher(board.getFlop());
+
+            while (matcher.find()) {
+                allCards.add(matcher.group());
+            }
         }
 
-        // Добавляем карту тёрна, если она есть
+        // Добавляем терн (четвертая общая карта), если он не равен null
         if (board.getTurn() != null) {
-            Collections.addAll(allCards, board.getTurn().split(","));
+            matcher = pattern.matcher(board.getTurn());
+
+            while (matcher.find()) {
+                allCards.add(matcher.group());
+            }
         }
 
-        // Добавляем карту ривера, если она есть
+        // Добавляем ривер (пятая общая карта), если он не равен null
         if (board.getRiver() != null) {
-            Collections.addAll(allCards, board.getRiver().split(","));
+            matcher = pattern.matcher(board.getRiver());
+
+            while (matcher.find()) {
+                allCards.add(matcher.group());
+            }
         }
 
         // Сравниваем на дубликаты и количество карт

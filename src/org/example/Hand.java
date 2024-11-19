@@ -64,7 +64,7 @@ public class Hand {
         Map<String, List<String>> rankCounts = new HashMap<>();
         // Хранит количество карт по мастям
         Map<String, Integer> suitCounts = new HashMap<>();
-        System.out.println(cards);
+        //System.out.println(cards);
         // Проходим по всем картам в руке
         for (String card : cards) {
             // Извлекаем ранг карты (все символы, кроме последнего)
@@ -158,10 +158,10 @@ public class Hand {
 
     public int comparison(Hand other) {
         HandRank thisRank = this.evaluateHand();
-        System.out.println("1 player: " + thisRank);
+        //System.out.println("1 player: " + thisRank);
 
         HandRank otherRank = other.evaluateHand();
-        System.out.println("2 player: " + otherRank);
+        //System.out.println("2 player: " + otherRank);
 
         int rankComparison = thisRank.compareTo(otherRank);
 

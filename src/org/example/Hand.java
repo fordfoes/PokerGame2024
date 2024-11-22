@@ -3,7 +3,9 @@ package org.example;
 import java.util.*;
 
 public class Hand {
-    private final List<String> cards;
+    private List<String> cards;
+    private List<String> cardsOFPlayer;
+    private List<String> cardsOnBoard;
 
     public Hand(List<String> playerCards, List<String> communityCards) {
         this.cards = new ArrayList<>(playerCards);
@@ -19,7 +21,50 @@ public class Hand {
                 }
             }
         } // Сортировка по убыванию
+        this.cardsOFPlayer = playerCards;
+
+        int n1 = cardsOFPlayer.size();
+        for (int i = 0; i < n1 - 1; i++) {
+            for (int j = 0; j < n1 - 1 - i; j++) {
+                if (getRank(cardsOFPlayer.get(j)) < getRank(cardsOFPlayer.get(j + 1))) {
+                    // Меняем местами карты
+                    String temp = cardsOFPlayer.get(j);
+                    cardsOFPlayer.set(j, cardsOFPlayer.get(j + 1));
+                    cardsOFPlayer.set(j + 1, temp);
+                }
+            }
+        } // Сортировка по убыванию
+
+        this.cardsOnBoard = communityCards;
+
+        int n2 = cardsOnBoard.size();
+        for (int i = 0; i < n2 - 1; i++) {
+            for (int j = 0; j < n2 - 1 - i; j++) {
+                if (getRank(cardsOnBoard.get(j)) < getRank(cardsOnBoard.get(j + 1))) {
+                    // Меняем местами карты
+                    String temp = cardsOnBoard.get(j);
+                    cardsOnBoard.set(j, cardsOnBoard.get(j + 1));
+                    cardsOnBoard.set(j + 1, temp);
+                }
+            }
+        } // Сортировка по убыванию
+
     } // В конструкторе принимаем карты игрока, общие карты и сортируем их от большего к меньшему
+
+    public Hand(List<String> cardsOnTable){
+        this.cards = cardsOnTable;
+        int n = cards.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - 1 - i; j++) {
+                if (getRank(cards.get(j)) < getRank(cards.get(j + 1))) {
+                    // Меняем местами карты
+                    String temp = cards.get(j);
+                    cards.set(j, cards.get(j + 1));
+                    cards.set(j + 1, temp);
+                }
+            }
+        } // Сортировка по убыванию
+    }
 
     private Integer getRank(String card) {
         String rank = card.trim().substring(0, card.length() - 1).trim();
@@ -158,10 +203,15 @@ public class Hand {
 
     public int comparison(Hand other) {
         HandRank thisRank = this.evaluateHand();
-        //System.out.println("1 player: " + thisRank);
+        System.out.println("1 player: " + thisRank);
 
         HandRank otherRank = other.evaluateHand();
-        //System.out.println("2 player: " + otherRank);
+        System.out.println("2 player: " + otherRank);
+
+        Hand boardCards = new Hand(cardsOnBoard);
+
+        HandRank boardRank = boardCards.evaluateHand();
+        System.out.println("Board Rank: " + boardRank);
 
         int rankComparison = thisRank.compareTo(otherRank);
 
@@ -171,6 +221,58 @@ public class Hand {
         // Если у нас одинаковая комбинация, сравниваем старшие карты
         List<Integer> thisHighCards = this.getHighCards();// 1 игрок
         List<Integer> otherHighCards = other.getHighCards();// 2 игрок
+
+
+
+        List<Integer> boardHighCards = boardCards.getHighCards(); // Старшая карта игрового стола
+
+        List<String> thisCardsP1 = this.cardsOFPlayer;// 1 игрок 2 карты в руке
+        List<String> otherCards1 = other.cardsOFPlayer;// 2 игрок 2 карты в руке
+
+        //System.out.println("Hand 1p: " + thisCardsP1);
+        //System.out.println("Hand 2p: " + otherCards1);
+
+        List<Integer> thisHighCards1 = new ArrayList<>(); // 1 игрок ранги карт
+        List<Integer> otherHighCards2= new ArrayList<>(); // 2 игрок ранги карт
+
+        for (int i = 0; i < thisCardsP1.size();i++) {
+            thisHighCards1.add(getRank(thisCardsP1.get(i)));
+        }// Добавляем ранги
+
+        for (int i = 0; i < otherCards1.size();i++) {
+            otherHighCards2.add(getRank(otherCards1.get(i)));
+        }// Добавляем ранги
+        //System.out.println("Hand 1p Integer: " + thisHighCards1);
+        //System.out.println("Hand 2p Integer: " + otherHighCards2);
+
+
+        //System.out.println("Cards: " + boardHighCards);
+
+        if (thisRank == boardRank && otherRank == boardRank) {
+            System.out.println(boardHighCards.getFirst() + "---------" + thisHighCards1.getFirst());
+            if (boardHighCards.getFirst() < thisHighCards1.getFirst()
+                    && boardHighCards.getFirst() > otherHighCards2.getFirst() ) {
+                //System.out.println("---1---");
+                return 1;
+            }
+            if (boardHighCards.getFirst() > thisHighCards1.getFirst()
+                    && boardHighCards.getFirst() < otherHighCards2.getFirst()) {
+                //System.out.println("---2---");
+                return -1;
+            }
+            if (boardHighCards.getFirst() > thisHighCards1.getFirst()
+                    && boardHighCards.getFirst() > otherHighCards2.getFirst()) {
+                System.out.println("---3---");
+                if (boardRank == HandRank.ONE_PAIR)
+                return 0;
+            }
+            if (boardHighCards.getFirst() < thisHighCards1.getFirst()
+                    && boardHighCards.getFirst() < otherHighCards2.getFirst()) {
+
+                //System.out.println("---4---");
+                return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+            }
+        } // Сравнение когда комбинация на игровом столе
 
         if (thisRank == HandRank.ONE_PAIR && otherRank == HandRank.ONE_PAIR) {
             int thisPairValue = -1; // Инициализируем переменную для значения пары

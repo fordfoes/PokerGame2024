@@ -203,15 +203,15 @@ public class Hand {
 
     public int comparison(Hand other) {
         HandRank thisRank = this.evaluateHand();
-        System.out.println("1 player: " + thisRank);
+        //System.out.println("1 player: " + thisRank);
 
         HandRank otherRank = other.evaluateHand();
-        System.out.println("2 player: " + otherRank);
+        //System.out.println("2 player: " + otherRank);
 
         Hand boardCards = new Hand(cardsOnBoard);
 
         HandRank boardRank = boardCards.evaluateHand();
-        System.out.println("Board Rank: " + boardRank);
+        //System.out.println("Board Rank: " + boardRank);
 
         int rankComparison = thisRank.compareTo(otherRank);
 
@@ -244,12 +244,26 @@ public class Hand {
         }// Добавляем ранги
         //System.out.println("Hand 1p Integer: " + thisHighCards1);
         //System.out.println("Hand 2p Integer: " + otherHighCards2);
+        List<Integer> allHighCards1 = new ArrayList<>();
+        allHighCards1.addAll(thisHighCards1);
+        allHighCards1.addAll(otherHighCards2);
+        int n = allHighCards1.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - 1 - i; j++) {
+                if (allHighCards1.get(j) < allHighCards1.get(j + 1)) {
+                    // Меняем местами карты
+                    int temp = allHighCards1.get(j);
+                    allHighCards1.set(j, allHighCards1.get(j + 1));
+                    allHighCards1.set(j + 1, temp);
+                }
+            }
+        } // Сортировка по убыванию
 
 
         //System.out.println("Cards: " + boardHighCards);
 
         if (thisRank == boardRank && otherRank == boardRank) {
-            System.out.println(boardHighCards.getFirst() + "---------" + thisHighCards1.getFirst());
+            //System.out.println(boardHighCards.getFirst() + "---------" + thisHighCards1.getFirst());
             if (boardHighCards.getFirst() < thisHighCards1.getFirst()
                     && boardHighCards.getFirst() > otherHighCards2.getFirst() ) {
                 //System.out.println("---1---");
@@ -260,21 +274,52 @@ public class Hand {
                 //System.out.println("---2---");
                 return -1;
             }
-            if (boardHighCards.getFirst() > thisHighCards1.getFirst()
-                    && boardHighCards.getFirst() > otherHighCards2.getFirst()) {
-                System.out.println("---3---");
-                if (boardRank == HandRank.ONE_PAIR) {
-                    return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
-                }
 
-                return 0;
-            }
             if (boardHighCards.getFirst() < thisHighCards1.getFirst()
                     && boardHighCards.getFirst() < otherHighCards2.getFirst()) {
 
                 //System.out.println("---4---");
                 return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
             }
+
+            if (boardHighCards.getFirst() > thisHighCards1.getFirst()
+                    && boardHighCards.getFirst() > otherHighCards2.getFirst()) {
+                //System.out.println("---3---");
+                //System.out.println(boardHighCards);
+                if (boardRank == HandRank.HIGH_CARD) {
+                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
+                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    }
+                }
+                if (boardRank == HandRank.ONE_PAIR) {
+                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
+                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    }
+                }
+                if (boardRank == HandRank.TWO_PAIR) {
+                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
+                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    }
+                }
+                if (boardRank == HandRank.THREE_OF_A_KIND) {
+                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
+                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    }
+                }
+                if (boardRank == HandRank.STRAIGHT) {
+                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
+                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    }
+                }
+                if (boardRank == HandRank.FOUR_OF_A_KIND) {
+                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
+                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    }
+                }
+
+                return 0;
+            }
+
         } // Сравнение когда комбинация на игровом столе
 
         if (thisRank == HandRank.ONE_PAIR && otherRank == HandRank.ONE_PAIR) {

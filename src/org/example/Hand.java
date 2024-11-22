@@ -263,7 +263,10 @@ public class Hand {
             if (boardHighCards.getFirst() > thisHighCards1.getFirst()
                     && boardHighCards.getFirst() > otherHighCards2.getFirst()) {
                 System.out.println("---3---");
-                if (boardRank == HandRank.ONE_PAIR)
+                if (boardRank == HandRank.ONE_PAIR) {
+                    return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                }
+
                 return 0;
             }
             if (boardHighCards.getFirst() < thisHighCards1.getFirst()

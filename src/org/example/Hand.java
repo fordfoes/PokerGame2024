@@ -264,56 +264,56 @@ public class Hand {
 
         if (thisRank == boardRank && otherRank == boardRank) {
             //System.out.println(boardHighCards.getFirst() + "---------" + thisHighCards1.getFirst());
-            if (boardHighCards.getFirst() < thisHighCards1.getFirst()
-                    && boardHighCards.getFirst() > otherHighCards2.getFirst() ) {
+            if (boardHighCards.get(0) < thisHighCards1.get(0)
+                    && boardHighCards.get(0) > otherHighCards2.get(0) ) {
                 //System.out.println("---1---");
                 return 1;
             }
-            if (boardHighCards.getFirst() > thisHighCards1.getFirst()
-                    && boardHighCards.getFirst() < otherHighCards2.getFirst()) {
+            if (boardHighCards.get(0) > thisHighCards1.get(0)
+                    && boardHighCards.get(0) < otherHighCards2.get(0)) {
                 //System.out.println("---2---");
                 return -1;
             }
 
-            if (boardHighCards.getFirst() < thisHighCards1.getFirst()
-                    && boardHighCards.getFirst() < otherHighCards2.getFirst()) {
+            if (boardHighCards.get(0) < thisHighCards1.get(0)
+                    && boardHighCards.get(0) < otherHighCards2.get(0)) {
 
                 //System.out.println("---4---");
-                return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
             }
 
-            if (boardHighCards.getFirst() > thisHighCards1.getFirst()
-                    && boardHighCards.getFirst() > otherHighCards2.getFirst()) {
+            if (boardHighCards.get(0) > thisHighCards1.get(0)
+                    && boardHighCards.get(0)> otherHighCards2.get(0)) {
                 //System.out.println("---3---");
                 //System.out.println(boardHighCards);
                 if (boardRank == HandRank.HIGH_CARD) {
-                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
-                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
+                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
                     }
                 }
                 if (boardRank == HandRank.ONE_PAIR) {
-                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
-                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
+                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
                     }
                 }
                 if (boardRank == HandRank.TWO_PAIR) {
-                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
-                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
+                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
                     }
                 }
                 if (boardRank == HandRank.THREE_OF_A_KIND) {
-                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
-                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
+                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
                     }
                 }
                 if (boardRank == HandRank.STRAIGHT) {
-                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
-                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
+                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
                     }
                 }
                 if (boardRank == HandRank.FOUR_OF_A_KIND) {
-                    if (boardHighCards.getLast() < allHighCards1.getFirst()) {
-                        return Integer.compare(thisHighCards1.getFirst(), otherHighCards2.getFirst());
+                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
+                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
                     }
                 }
 

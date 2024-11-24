@@ -263,7 +263,7 @@ public class Hand {
         //System.out.println("Cards: " + boardHighCards);
 
         if (thisRank == boardRank && otherRank == boardRank) {
-            //System.out.println(boardHighCards.getFirst() + "---------" + thisHighCards1.getFirst());
+            //System.out.println(boardHighCards.get(0) + "---------" + thisHighCards1.get(thisHighCards1.size()-1));
             if (boardHighCards.get(0) < thisHighCards1.get(0)
                     && boardHighCards.get(0) > otherHighCards2.get(0) ) {
                 //System.out.println("---1---");
@@ -277,9 +277,16 @@ public class Hand {
 
             if (boardHighCards.get(0) < thisHighCards1.get(0)
                     && boardHighCards.get(0) < otherHighCards2.get(0)) {
-
                 //System.out.println("---4---");
-                return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
+                if (0 == Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0))) {
+                    if (0 == Integer.compare(thisHighCards1.get(1), otherHighCards2.get(1))) {
+                        return 0;
+                    } else {
+                        return Integer.compare(thisHighCards1.get(1), otherHighCards2.get(1));
+                    }
+                } else {
+                    return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
+                }
             }
 
             if (boardHighCards.get(0) > thisHighCards1.get(0)
@@ -287,6 +294,7 @@ public class Hand {
                 //System.out.println("---3---");
                 //System.out.println(boardHighCards);
                 if (boardRank == HandRank.HIGH_CARD) {
+                    //System.out.println("Igor");
                     if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
                         return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
                     }

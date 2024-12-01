@@ -368,13 +368,27 @@ public class Hand {
                 }
             }
         }
+//        System.out.println(boardHighCards);
+        if (thisRank == HandRank.THREE_OF_A_KIND && otherRank == HandRank.THREE_OF_A_KIND) {
+            if (boardHighCards.get(0) < allHighCards1.get(0)) {
+//                System.out.println(boardHighCards.get(0));
+//                System.out.println("TESTE");
+                return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
+            } else {
+                return 0;
+            }
+        }
 
 
         // Сравниваем старшие карты, если не пара
         for (int i = 0; i < Math.min(thisHighCards.size(), otherHighCards.size()); i++) {
             int comparison = Integer.compare(thisHighCards.get(i), otherHighCards.get(i));
             if (comparison != 0) {
+
+                //System.out.println("TEST");
+
                 return comparison; // Возвращаем результат сравнения старших карт
+
             }
         }
 

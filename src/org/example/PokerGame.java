@@ -18,6 +18,8 @@ public class PokerGame {
 //        Board board = new Board("10C5S", "9H6D", "KC2SAC", "KS", "KD"); // PLAYER_ONE_WIN
 //        Board board = new Board("10C5S", "9H6D", "KCJSAC", "KS", "KD"); //DRAW
 //        Board board = new Board("5CAD", "KCAC", "4S9H2C", "8D", "7C"); //PLAYER_TWO_WIN
+//                Board board = new Board("2C7D", "2DJD", "2H2SKH", "QC", "AS");
+
 
 
         System.out.println(board);

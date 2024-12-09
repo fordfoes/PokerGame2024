@@ -374,7 +374,10 @@ public class Hand {
 //                System.out.println(boardHighCards.get(0));
 //                System.out.println("TESTE");
                 return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
+            } else if (thisHighCards1.get(0)!=otherHighCards2.get(0)&&thisHighCards1.get(1)!=otherHighCards2.get(1)) {
+                return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
             } else {
+                //System.out.println("TEST SET");
                 return 0;
             }
         }

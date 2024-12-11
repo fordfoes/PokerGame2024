@@ -4,8 +4,16 @@ import java.util.*;
 
 public class Hand {
     private List<String> cards;
-    private List<String> cardsOFPlayer;
+    private List<String> cardsOfPlayer;
     private List<String> cardsOnBoard;
+
+    public List<String> getCardsOnBoard() {
+        return cardsOnBoard;
+    }
+
+    public List<String> getCardsOfPlayer() {
+        return cardsOfPlayer;
+    }
 
     public Hand(List<String> playerCards, List<String> communityCards) {
         this.cards = new ArrayList<>(playerCards);
@@ -21,16 +29,16 @@ public class Hand {
                 }
             }
         } // Сортировка по убыванию
-        this.cardsOFPlayer = playerCards;
+        this.cardsOfPlayer = playerCards;
 
-        int n1 = cardsOFPlayer.size();
+        int n1 = cardsOfPlayer.size();
         for (int i = 0; i < n1 - 1; i++) {
             for (int j = 0; j < n1 - 1 - i; j++) {
-                if (getRank(cardsOFPlayer.get(j)) < getRank(cardsOFPlayer.get(j + 1))) {
+                if (getRank(cardsOfPlayer.get(j)) < getRank(cardsOfPlayer.get(j + 1))) {
                     // Меняем местами карты
-                    String temp = cardsOFPlayer.get(j);
-                    cardsOFPlayer.set(j, cardsOFPlayer.get(j + 1));
-                    cardsOFPlayer.set(j + 1, temp);
+                    String temp = cardsOfPlayer.get(j);
+                    cardsOfPlayer.set(j, cardsOfPlayer.get(j + 1));
+                    cardsOfPlayer.set(j + 1, temp);
                 }
             }
         } // Сортировка по убыванию
@@ -49,7 +57,7 @@ public class Hand {
             }
         } // Сортировка по убыванию
 
-    } // В конструкторе принимаем карты игрока, общие карты и сортируем их от большего к меньшему
+    }
 
     public Hand(List<String> cardsOnTable){
         this.cards = cardsOnTable;
@@ -66,7 +74,7 @@ public class Hand {
         } // Сортировка по убыванию
     }
 
-    private Integer getRank(String card) {
+    public Integer getRank(String card) {
         String rank = card.trim().substring(0, card.length() - 1).trim();
         switch (rank) {
             case "2":
@@ -105,11 +113,9 @@ public class Hand {
     }
 
     public HandRank evaluateHand() {
-        // Хранит карты по рангам
         Map<String, List<String>> rankCounts = new HashMap<>();
         // Хранит количество карт по мастям
         Map<String, Integer> suitCounts = new HashMap<>();
-        //System.out.println(cards);
         // Проходим по всем картам в руке
         for (String card : cards) {
             // Извлекаем ранг карты (все символы, кроме последнего)
@@ -169,13 +175,13 @@ public class Hand {
             }
             return HandRank.STRAIGHT_FLUSH;
         }
-        if (counts.get(0) == 4) return HandRank.FOUR_OF_A_KIND; // Четверка
-        if (counts.get(0) == 3 && counts.size() > 1 && counts.get(1) == 2) return HandRank.FULL_HOUSE; // Фулл Хаус
-        if (isFlush) return HandRank.FLUSH; // Флеш
-        if (isStraight) return HandRank.STRAIGHT; // Стрит
-        if (counts.get(0) == 3) return HandRank.THREE_OF_A_KIND; // Тройка
-        if (counts.get(0) == 2 && counts.size() > 1 && counts.get(1) == 2) return HandRank.TWO_PAIR; // Две пары
-        if (counts.get(0) == 2) return HandRank.ONE_PAIR; // Пара
+        if (counts.get(0) == 4) return HandRank.FOUR_OF_A_KIND;
+        if (counts.get(0) == 3 && counts.size() > 1 && counts.get(1) == 2) return HandRank.FULL_HOUSE;
+        if (isFlush) return HandRank.FLUSH;
+        if (isStraight) return HandRank.STRAIGHT;
+        if (counts.get(0) == 3) return HandRank.THREE_OF_A_KIND;
+        if (counts.get(0) == 2 && counts.size() > 1 && counts.get(1) == 2) return HandRank.TWO_PAIR;
+        if (counts.get(0) == 2) return HandRank.ONE_PAIR;
 
         // Если ни одна из комбинаций не подошла, возвращаем старшую карту
         return HandRank.HIGH_CARD;
@@ -201,210 +207,14 @@ public class Hand {
         return uniqueRanks.contains(14) && uniqueRanks.contains(2) && uniqueRanks.contains(3) && uniqueRanks.contains(4) && uniqueRanks.contains(5);
     }
 
-    public int comparison(Hand other) {
-        HandRank thisRank = this.evaluateHand();
-        //System.out.println("1 player: " + thisRank);
-
-        HandRank otherRank = other.evaluateHand();
-        //System.out.println("2 player: " + otherRank);
-
-        Hand boardCards = new Hand(cardsOnBoard);
-
-        HandRank boardRank = boardCards.evaluateHand();
-        //System.out.println("Board Rank: " + boardRank);
-
-        int rankComparison = thisRank.compareTo(otherRank);
-
-        if (rankComparison != 0) { // Если руки не равны, то возвращаем значение
-            return rankComparison;
-        }
-        // Если у нас одинаковая комбинация, сравниваем старшие карты
-        List<Integer> thisHighCards = this.getHighCards();// 1 игрок
-        List<Integer> otherHighCards = other.getHighCards();// 2 игрок
 
 
 
-        List<Integer> boardHighCards = boardCards.getHighCards(); // Старшая карта игрового стола
-
-        List<String> thisCardsP1 = this.cardsOFPlayer;// 1 игрок 2 карты в руке
-        List<String> otherCards1 = other.cardsOFPlayer;// 2 игрок 2 карты в руке
-
-        //System.out.println("Hand 1p: " + thisCardsP1);
-        //System.out.println("Hand 2p: " + otherCards1);
-
-        List<Integer> thisHighCards1 = new ArrayList<>(); // 1 игрок ранги карт
-        List<Integer> otherHighCards2= new ArrayList<>(); // 2 игрок ранги карт
-
-        for (int i = 0; i < thisCardsP1.size();i++) {
-            thisHighCards1.add(getRank(thisCardsP1.get(i)));
-        }// Добавляем ранги
-
-        for (int i = 0; i < otherCards1.size();i++) {
-            otherHighCards2.add(getRank(otherCards1.get(i)));
-        }// Добавляем ранги
-        //System.out.println("Hand 1p Integer: " + thisHighCards1);
-        //System.out.println("Hand 2p Integer: " + otherHighCards2);
-        List<Integer> allHighCards1 = new ArrayList<>();
-        allHighCards1.addAll(thisHighCards1);
-        allHighCards1.addAll(otherHighCards2);
-        int n = allHighCards1.size();
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - 1 - i; j++) {
-                if (allHighCards1.get(j) < allHighCards1.get(j + 1)) {
-                    // Меняем местами карты
-                    int temp = allHighCards1.get(j);
-                    allHighCards1.set(j, allHighCards1.get(j + 1));
-                    allHighCards1.set(j + 1, temp);
-                }
-            }
-        } // Сортировка по убыванию
-
-
-        //System.out.println("Cards: " + boardHighCards);
-
-        if (thisRank == boardRank && otherRank == boardRank) {
-            //System.out.println(boardHighCards.get(0) + "---------" + thisHighCards1.get(thisHighCards1.size()-1));
-            if (boardHighCards.get(0) < thisHighCards1.get(0)
-                    && boardHighCards.get(0) > otherHighCards2.get(0) ) {
-                //System.out.println("---1---");
-                return 1;
-            }
-            if (boardHighCards.get(0) > thisHighCards1.get(0)
-                    && boardHighCards.get(0) < otherHighCards2.get(0)) {
-                //System.out.println("---2---");
-                return -1;
-            }
-
-            if (boardHighCards.get(0) < thisHighCards1.get(0)
-                    && boardHighCards.get(0) < otherHighCards2.get(0)) {
-                //System.out.println("---4---");
-                if (0 == Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0))) {
-                    if (0 == Integer.compare(thisHighCards1.get(1), otherHighCards2.get(1))) {
-                        return 0;
-                    } else {
-                        return Integer.compare(thisHighCards1.get(1), otherHighCards2.get(1));
-                    }
-                } else {
-                    return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
-                }
-            }
-
-            if (boardHighCards.get(0) > thisHighCards1.get(0)
-                    && boardHighCards.get(0)> otherHighCards2.get(0)) {
-                //System.out.println("---3---");
-                //System.out.println(boardHighCards);
-                if (boardRank == HandRank.HIGH_CARD) {
-                    //System.out.println("Igor");
-                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
-                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
-                    }
-                }
-                if (boardRank == HandRank.ONE_PAIR) {
-                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
-                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
-                    }
-                }
-                if (boardRank == HandRank.TWO_PAIR) {
-                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
-                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
-                    }
-                }
-                if (boardRank == HandRank.THREE_OF_A_KIND) {
-                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
-                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
-                    }
-                }
-                if (boardRank == HandRank.STRAIGHT) {
-                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
-                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
-                    }
-                }
-                if (boardRank == HandRank.FOUR_OF_A_KIND) {
-                    if (boardHighCards.get(boardHighCards.size() - 1) < allHighCards1.get(0)) {
-                        return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
-                    }
-                }
-
-                return 0;
-            }
-
-        } // Сравнение когда комбинация на игровом столе
-
-        if (thisRank == HandRank.ONE_PAIR && otherRank == HandRank.ONE_PAIR) {
-            int thisPairValue = -1; // Инициализируем переменную для значения пары
-            int otherPairValue = -1; // Инициализируем переменную для значения пары
-
-            // Находим значение пары для этой руки
-            for (int cardValue : thisHighCards) {
-                if (Collections.frequency(thisHighCards, cardValue) == 2) {
-                    thisPairValue = cardValue;
-                    break; // Выходим из цикла, как только нашли пару
-                }
-            }
-
-            // Находим значение пары для другой руки
-            for (int cardValue : otherHighCards) {
-                if (Collections.frequency(otherHighCards, cardValue) == 2) {
-                    otherPairValue = cardValue;
-                    break; // Выходим из цикла, как только нашли пару
-                }
-            }
-
-            // Проверяем, нашли ли мы пары
-            if (thisPairValue != -1 && otherPairValue != -1) {
-                // Сравниваем пары
-                if (thisPairValue != otherPairValue) {
-                    return Integer.compare(thisPairValue, otherPairValue);
-                }
-            }
-            // Если пары равны, сравниваем кикеры
-            List<Integer> thisKickers = thisHighCards.subList(1, thisHighCards.size());
-            List<Integer> otherKickers = otherHighCards.subList(1, otherHighCards.size());
-
-            for (int i = 0; i < Math.min(thisKickers.size(), otherKickers.size()); i++) {
-                int kickerComparison = Integer.compare(thisKickers.get(i), otherKickers.get(i));
-                if (kickerComparison != 0) {
-                    return kickerComparison; // Возвращаем результат сравнения кикеров
-                }
-            }
-        }
-//        System.out.println(boardHighCards);
-        if (thisRank == HandRank.THREE_OF_A_KIND && otherRank == HandRank.THREE_OF_A_KIND) {
-            if (boardHighCards.get(0) < allHighCards1.get(0)) {
-//                System.out.println(boardHighCards.get(0));
-//                System.out.println("TESTE");
-                return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
-            } else if (thisHighCards1.get(0)!=otherHighCards2.get(0)&&thisHighCards1.get(1)!=otherHighCards2.get(1)) {
-                return Integer.compare(thisHighCards1.get(0), otherHighCards2.get(0));
-            } else {
-                //System.out.println("TEST SET");
-                return 0;
-            }
-        }
-
-
-        // Сравниваем старшие карты, если не пара
-        for (int i = 0; i < Math.min(thisHighCards.size(), otherHighCards.size()); i++) {
-            int comparison = Integer.compare(thisHighCards.get(i), otherHighCards.get(i));
-            if (comparison != 0) {
-
-                //System.out.println("TEST");
-
-                return comparison; // Возвращаем результат сравнения старших карт
-
-            }
-        }
-
-        return 0; // Если все старшие карты равны, руки равны
-    }
-
-
-    private List<Integer> getHighCards() {
+    public List<Integer> getHighCards() {
         Set<String> rankCounts = new HashSet<>();
         for (String card : cards) {
             // Извлекаем ранг карты
             String rank = card.substring(0, card.length() - 1);
-
             // Добавляем ранг в множество
             rankCounts.add(rank);
         }

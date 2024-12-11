@@ -1,49 +1,46 @@
-package org.example; // Указываем пакет
-// Указываем импорты
+package org.example;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;// Указываем импорты// Указываем импорты
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GoodDealer implements Dealer { // Создаем класс хороший дилер который реализует интерфейс Dealer
-    // Определяем поля класса
     private final List<String> deck; // Это колода
     private int currentCardIndex; // Это переменная которая хранит текущий индекс карты в колоде
 
-    public GoodDealer() { // Это конструктор
+    public GoodDealer() {
         this.deck = createDeck(); // Здесь создается колода карт и присваивается переменной
-        this.currentCardIndex = 0; // Индекс списка начинается с 0
+        this.currentCardIndex = 0;
         Collections.shuffle(deck); // Это метод класса коллекций который перемешивает элементы в списке, в данном случаем колоду карт
-    } // Чешем колоду
+    }
 
-    private List<String> createDeck() { // Метод возвращает список строк
-        List<String> deck = new ArrayList<>(); // Создаем объект класса ArrayList<>(), который будет хранить карты
+    private List<String> createDeck() {
+        List<String> deck = new ArrayList<>();
         String[] suits = {"C", "D", "H", "S"}; // Определяем масти C — червы (Clubs) D — бубны (Diamonds) H — червы (Hearts) S — пики (Spades)
         String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"}; // Определяем ранги номера от 2 до 10, а также валет (J), дама (Q), король (K) и туз (A)
         // Создаем карты
-        for (String suit : suits) { // Перебираем масти
-            for (String rank : ranks) { // Перебираем ранги
+        for (String suit : suits) {
+            for (String rank : ranks) {
                 deck.add(rank + suit); // Добавляем созданную строку в список deck
             }
         }
-        return deck; // Возвращаем колоду
+        return deck;
     } // Создаем колоду
 
-    private String dealCard() { // Это метод раздачи колоды
+    private String dealCard() {
         if (currentCardIndex >= deck.size()) { // Проверяем достигнут ли конец колоды
             throw new InvalidPokerBoardException("Закончились карты в колоде");
         }
         return deck.get(currentCardIndex++); // Возвращаем карту по текущему индексу и увеличиваем на 1
     } // Раздаем карту
 
-    // Переопределяем метод интерфейса раздача карт игрокам
     @Override
     public Board dealCardsToPlayers() {
-        String playerOne = dealCard() + dealCard(); // Раздаем две карты первому игроку
-        String playerTwo = dealCard() + dealCard(); // Раздаем две карты второму игроку
+        String playerOne = dealCard() + dealCard();
+        String playerTwo = dealCard() + dealCard();
 
         // Убедимся что карты уникальны
         if (playerOne.equals(playerTwo)) {
@@ -53,26 +50,26 @@ public class GoodDealer implements Dealer { // Создаем класс хор�
         return new Board(playerOne, playerTwo, null, null, null);
     } // Раздаем 2 карты игрокам и получаем доску
 
-    @Override // Переопределяем метод интерфейса раздача 3 карт общих для игроков
+    @Override
     public Board dealFlop(Board board) {
         String flop = dealCard() + dealCard() + dealCard(); // Раздача 3 карт
         return new Board(board.getPlayerOne(), board.getPlayerTwo(), flop, null, null); // Возвращаем на игровую доску уже розданные карты игрока и флоп
     }
 
-    @Override // Переопределяем метод интерфейса раздача еще 1 общей карты (тёрн) для игроков
+    @Override
     public Board dealTurn(Board board) {
         String turn = dealCard();
         return new Board(board.getPlayerOne(), board.getPlayerTwo(), board.getFlop(), turn, null); // Возвращаем на игровую доску уже розданные карты игрока, флоп и тёрн
     }
 
-    @Override // Переопределяем метод интерфейса раздача еще 1 общей карты (ривер) для игроков
+    @Override
     public Board dealRiver(Board board) {
         String river = dealCard();
         return new Board(board.getPlayerOne(), board.getPlayerTwo(), board.getFlop(), board.getTurn(), river); // Возвращаем на игровую доску уже розданные карты игрока, флоп и тёрн и ривер
     }
 
     @Override
-    public PokerResult decideWinner(Board board) throws InvalidPokerBoardException { // Определяем победителя
+    public PokerResult decideWinner(Board board) throws InvalidPokerBoardException {
         validateBoard(board);// Проверка что на игровом столе все в порядке
 
         List<String> playerOneCards = new ArrayList<>();
@@ -127,10 +124,12 @@ public class GoodDealer implements Dealer { // Создаем класс хор�
         // Создаем руки игроков, используя их карты и общие карты
         Hand playerOneHand = new Hand(playerOneCards, communityCards);
         Hand playerTwoHand = new Hand(playerTwoCards, communityCards);
+        Hand cardsOnBoard = new Hand(communityCards);
 
 
         // Сравниваем руки игроков
-        int comparisonResult = playerOneHand.comparison(playerTwoHand);
+        HandComparison comparison = new HandComparison(playerOneHand, playerTwoHand, cardsOnBoard);
+        int comparisonResult = comparison.comparison();
 
         // Определяем победителя на основе результата сравнения
         if (comparisonResult > 0) {
@@ -143,7 +142,7 @@ public class GoodDealer implements Dealer { // Создаем класс хор�
     }
 
     private void validateBoard(Board board) {
-        HashSet<String> allCards = new HashSet<>(); // Создаем HashSet для хранения уникальных карт
+        HashSet<String> allCards = new HashSet<>(); //
 
         // Регулярное выражение для поиска групп по 2 или 3 символа, заканчивающихся на C, D, H или S
         Pattern pattern = Pattern.compile("\\d{1,2}[CDHS]|[A-Z][CDHS]");
